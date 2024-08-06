@@ -1,0 +1,61 @@
+datasource db {
+  provider = "mongodb"
+  url      = env("DB_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model ClassModel {
+  course    Course?   @relation(fields: [courseId], references: [id])
+  courseId  String?   @db.ObjectId
+  createdAt DateTime  @default(now())
+  endTime   DateTime?
+  id        String    @id @default(auto()) @map("_id") @db.ObjectId
+  startTime DateTime?
+  updatedAt DateTime  @updatedAt
+}
+
+model Course {
+  classes     ClassModel[]
+  createdAt   DateTime     @default(now())
+  description String?
+  duration    Int?
+  grades      Grade[]
+  id          String       @id @default(auto()) @map("_id") @db.ObjectId
+  title       String?
+  updatedAt   DateTime     @updatedAt
+}
+
+model Grade {
+  course    Course?  @relation(fields: [courseId], references: [id])
+  courseId  String?  @db.ObjectId
+  createdAt DateTime @default(now())
+  grade     Int?
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  student   String?
+  updatedAt DateTime @updatedAt
+}
+
+model Message {
+  createdAt      DateTime  @default(now())
+  id             String    @id @default(auto()) @map("_id") @db.ObjectId
+  messageContent String?
+  receiver       String?
+  sender         String?
+  sentAt         DateTime?
+  updatedAt      DateTime  @updatedAt
+}
+
+model User {
+  createdAt DateTime @default(now())
+  email     String?  @unique
+  firstName String?
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  lastName  String?
+  password  String
+  roles     Json
+  updatedAt DateTime @updatedAt
+  username  String   @unique
+}
